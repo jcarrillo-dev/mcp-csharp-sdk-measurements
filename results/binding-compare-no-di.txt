@@ -5,7 +5,7 @@ Unhandled exception. System.NotSupportedException: JsonTypeInfo metadata for typ
    at Microsoft.Extensions.AI.AIFunctionFactory.ReflectionAIFunctionDescriptor..ctor(AIFunctionFactory.ReflectionAIFunctionDescriptor.DescriptorKey, JsonSerializerOptions) + 0x2fe
    at Microsoft.Extensions.AI.AIFunctionFactory.ReflectionAIFunctionDescriptor.GetOrCreate(MethodInfo, AIFunctionFactoryOptions) + 0x1f3
    at Microsoft.Extensions.AI.AIFunctionFactory.ReflectionAIFunction.Build(MethodInfo, Object, AIFunctionFactoryOptions) + 0x57
-   at Binding.CreateTool(MethodInfo, String, IServiceProvider, JsonSerializerOptions, McpServerToolCreateOptions) + 0x157
+   at Binding.CreateTool(MethodInfo, String, IServiceProvider, JsonSerializerOptions, McpServerToolCreateOptions) + 0x11d
    at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite, RuntimeResolverContext) + 0x64
    at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitIEnumerable(IEnumerableCallSite, RuntimeResolverContext) + 0x60
    at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite, RuntimeResolverContext) + 0x64

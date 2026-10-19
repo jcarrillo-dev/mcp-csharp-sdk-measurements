@@ -90,6 +90,7 @@ dotnet publish prototypes/memory-scan -c Release -r linux-x64 -o prototypes/memo
 # Binding prototype
 prototypes/binding/out/binding tests > results/binding-tests.txt
 prototypes/binding/out/binding compare > results/binding-compare.txt
+# The server is expected to abort here (that is the result); with `set -o pipefail` this line returns non-zero
 echo | CMP=aifunction prototypes/binding/out/binding server 2>&1 | head -12 > results/binding-compare-no-di.txt
 scripts/binding-scan.sh > results/binding-scan.txt
 
