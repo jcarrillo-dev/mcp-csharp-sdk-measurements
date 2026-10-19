@@ -1,0 +1,372 @@
+##### TRANSPORT=sdk all variants run=1
+a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":11,"jsonrpc":"2.0"}
+c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":12,"jsonrpc":"2.0"}
+d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":13,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 3
+   a_string utf16: 3
+   b_element utf8 : 0
+   b_element utf16: 1
+   c_filter utf8 : 0
+   c_filter utf16: 1
+   d_message utf8 : 1
+   d_message utf16: 2
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 3
+   a_string utf16: 3
+   b_element utf8 : 0
+   b_element utf16: 1
+   c_filter utf8 : 0
+   c_filter utf16: 1
+   d_message utf8 : 1
+   d_message utf16: 2
+-- after 20 more calls without the secret
+   a_string utf8 : 3
+   a_string utf16: 3
+   b_element utf8 : 0
+   b_element utf16: 1
+   c_filter utf8 : 0
+   c_filter utf16: 1
+   d_message utf8 : 0
+   d_message utf16: 1
+##### TRANSPORT=sdk all variants run=2
+a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":11,"jsonrpc":"2.0"}
+c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":12,"jsonrpc":"2.0"}
+d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":13,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 3
+   a_string utf16: 3
+   b_element utf8 : 0
+   b_element utf16: 1
+   c_filter utf8 : 0
+   c_filter utf16: 1
+   d_message utf8 : 1
+   d_message utf16: 2
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 3
+   a_string utf16: 3
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 1
+   d_message utf8 : 1
+   d_message utf16: 2
+-- after 20 more calls without the secret
+   a_string utf8 : 2
+   a_string utf16: 2
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 1
+   d_message utf8 : 0
+   d_message utf16: 1
+##### TRANSPORT=sdk ONLY=a
+a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 3
+   a_string utf16: 3
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 3
+   a_string utf16: 3
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 2
+   a_string utf16: 2
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+##### TRANSPORT=sdk ONLY=b
+b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 1
+   b_element utf16: 2
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 1
+   b_element utf16: 2
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 1
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+##### TRANSPORT=sdk ONLY=c
+c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":10,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 1
+   c_filter utf16: 2
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 1
+   c_filter utf16: 2
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 1
+   d_message utf8 : 0
+   d_message utf16: 0
+##### TRANSPORT=sdk ONLY=d
+d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":10,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 1
+   d_message utf16: 2
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 1
+   d_message utf16: 4
+-- after 20 more calls without the secret
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 1
+##### TRANSPORT=bytes all variants run=1
+a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":11,"jsonrpc":"2.0"}
+c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":12,"jsonrpc":"2.0"}
+d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":13,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+##### TRANSPORT=bytes all variants run=2
+a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":11,"jsonrpc":"2.0"}
+c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":12,"jsonrpc":"2.0"}
+d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":13,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+##### TRANSPORT=bytes ONLY=a
+a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 2
+   a_string utf16: 1
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+##### TRANSPORT=bytes ONLY=b
+b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+##### TRANSPORT=bytes ONLY=c
+c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":10,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+##### TRANSPORT=bytes ONLY=d
+d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":10,"jsonrpc":"2.0"}
+-- after the calls
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
+-- after a compacting GC in the child
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0
+-- after 20 more calls without the secret
+   a_string utf8 : 0
+   a_string utf16: 0
+   b_element utf8 : 0
+   b_element utf16: 0
+   c_filter utf8 : 0
+   c_filter utf16: 0
+   d_message utf8 : 0
+   d_message utf16: 0

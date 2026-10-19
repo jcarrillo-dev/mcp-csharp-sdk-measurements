@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><AssemblyName>memory-scan</AssemblyName>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TrimMode>full</TrimMode>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+    <IlLinkTreatWarningsAsErrors>true</IlLinkTreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+  </PropertyGroup>
+  <!-- By default the published 2.2.0 package is used. Pass -p:McpSdkRoot=/path/to/csharp-sdk to build against a local clone instead. -->
+  <ItemGroup Condition="'$(McpSdkRoot)' == ''">
+    <PackageReference Include="ModelContextProtocol" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(McpSdkRoot)' != ''">
+    <ProjectReference Include="$(McpSdkRoot)/src/ModelContextProtocol/ModelContextProtocol.csproj" />
+  </ItemGroup>
+</Project>

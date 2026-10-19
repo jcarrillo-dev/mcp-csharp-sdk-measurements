@@ -1,0 +1,5 @@
+dotnet SDK: 10.0.201
+Microsoft.NETCore.App 10.0.5 [...]
+OS: Linux x86_64
+kernel.yama.ptrace_scope: 1
+CPUs: 32

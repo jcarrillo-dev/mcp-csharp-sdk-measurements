@@ -1,0 +1,12 @@
+Unhandled exception. System.NotSupportedException: JsonTypeInfo metadata for type 'TestService' was not provided by TypeInfoResolver of type '[CmpJsonContext, TestJsonContext, ModelContextProtocol.McpJsonUtilities+JsonContext, Microsoft.Extensions.AI.AIJsonUtilities+JsonContext]'. If using source generation, ensure that all root types passed to the serializer have been annotated with 'JsonSerializableAttribute', along with any types that might be serialized polymorphically.
+   at System.Text.Json.ThrowHelper.ThrowNotSupportedException_NoMetadataForType(Type, IJsonTypeInfoResolver) + 0x67
+   at System.Text.Json.JsonSerializerOptions.GetTypeInfoInternal(Type, Boolean, Nullable`1, Boolean, Boolean) + 0xab
+   at Microsoft.Extensions.AI.AIFunctionFactory.ReflectionAIFunctionDescriptor.GetParameterMarshaller(JsonSerializerOptions, AIFunctionFactoryOptions.ParameterBindingOptions, ParameterInfo) + 0xcc
+   at Microsoft.Extensions.AI.AIFunctionFactory.ReflectionAIFunctionDescriptor..ctor(AIFunctionFactory.ReflectionAIFunctionDescriptor.DescriptorKey, JsonSerializerOptions) + 0x2fe
+   at Microsoft.Extensions.AI.AIFunctionFactory.ReflectionAIFunctionDescriptor.GetOrCreate(MethodInfo, AIFunctionFactoryOptions) + 0x1f3
+   at Microsoft.Extensions.AI.AIFunctionFactory.ReflectionAIFunction.Build(MethodInfo, Object, AIFunctionFactoryOptions) + 0x57
+   at Binding.CreateTool(MethodInfo, String, IServiceProvider, JsonSerializerOptions, McpServerToolCreateOptions) + 0x157
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite, RuntimeResolverContext) + 0x64
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitIEnumerable(IEnumerableCallSite, RuntimeResolverContext) + 0x60
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite, RuntimeResolverContext) + 0x64
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite, RuntimeResolverContext) + 0x79

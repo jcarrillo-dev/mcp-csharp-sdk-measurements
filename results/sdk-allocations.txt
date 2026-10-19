@@ -1,0 +1,39 @@
+##### main (af0fda30)
+SDK assembly: 2.2.0.0 (ModelContextProtocol.Core.dll)
+Runtime: 10.0.5, calls per run: 20000, runs per size: 3
+argument_length	run	bytes_per_call	microseconds_per_call
+16	1	6809	78.3
+16	2	6808	62.6
+16	3	6777	29.0
+1024	1	13737	21.0
+1024	2	13704	16.0
+1024	3	13704	14.5
+65536	1	465471	188.9
+65536	2	465470	176.2
+65536	3	465470	159.1
+##### stdio-pipereader (fe0500a0)
+SDK assembly: 2.2.0.0 (ModelContextProtocol.Core.dll)
+Runtime: 10.0.5, calls per run: 20000, runs per size: 3
+argument_length	run	bytes_per_call	microseconds_per_call
+16	1	6281	67.6
+16	2	6282	57.0
+16	3	6187	28.2
+1024	1	11160	15.1
+1024	2	11160	13.0
+1024	3	11160	13.6
+65536	1	333815	131.0
+65536	2	333811	159.4
+65536	3	333818	190.4
+##### toolcall-from-jsonelement (c027c8e3)
+SDK assembly: 2.2.0.0 (ModelContextProtocol.Core.dll)
+Runtime: 10.0.5, calls per run: 20000, runs per size: 3
+argument_length	run	bytes_per_call	microseconds_per_call
+16	1	6650	85.7
+16	2	6648	66.1
+16	3	6606	38.0
+1024	1	13573	21.0
+1024	2	13544	18.8
+1024	3	13544	18.1
+65536	1	465310	177.8
+65536	2	465311	179.2
+65536	3	465310	172.6

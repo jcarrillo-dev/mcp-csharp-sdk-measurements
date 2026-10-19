@@ -1,0 +1,44 @@
+=== 1. Schemas (tools/list) with the binder ===
+metadata: {"type":"object","properties":{}}
+send: {"type":"object","properties":{"destination":{"description":"Destination","type":"string"},"text":{"type":"string","description":"Text to send"},"secret":{"description":"Whether the text is secret","type":"boolean","default":false}},"required":["destination","text"]}
+gc: {"type":"object","properties":{}}
+status: {"type":"object","properties":{}}
+wait: {"type":"object","properties":{"delay":{"type":"string","pattern":"^[0-9]\u002B[smhd]$","description":"Relative delay"}},"required":["delay"]}
+as_string: {"type":"object","properties":{"text":{"type":"string"}},"required":["text"]}
+wait_generic: {"type":"object","properties":{"delay":{"type":"string","pattern":"^[0-9]\u002B[smhd]$"}},"required":["delay"]}
+
+=== 2. Escapes: text = p é \n \" \u0041 z (é as raw UTF-8; \n, \" and \u0041 escaped) ===
+JSON sent for text: "pé\n\"\u0041z"   expected hex 70C3A90A22417A
+secret=false: destination=h len=7 secret=False pinned=False capacity=32 hex=70C3A90A22417A types=destination:System.Text.Json.JsonElement,secret:System.Text.Json.JsonElement
+secret=true:  destination=h len=7 secret=True pinned=True capacity=19 hex=70C3A90A22417A types=destination:System.Text.Json.JsonElement,secret:System.Text.Json.JsonElement
+no secret:    destination=h len=3 secret=False pinned=False capacity=16 hex=616263 types=destination:System.Text.Json.JsonElement,secret:absent
+status:       created=3 disposed=3
+
+=== 3. Dispose with the filter, when another argument fails after binding text ===
+secret="x":   [isError] An error occurred invoking 'send'.
+status:       created=4 disposed=4
+no text:      [isError] An error occurred invoking 'send': Missing argument 'text'.
+text=5:       [isError] An error occurred invoking 'send': text must be a string.
+status:       created=4 disposed=4
+
+=== 4. Relative TimeSpan ===
+wait "15m"                    -> seconds=900
+wait "2h"                     -> seconds=7200
+wait "90s"                    -> seconds=90
+wait "3d"                     -> seconds=259200
+wait "\u0031\u0035m"          -> seconds=900
+wait "15x"                    -> [isError] An error occurred invoking 'wait': Invalid duration: use a positive integer followed by s, m, h or d (for example 15m).
+wait "0m"                     -> [isError] An error occurred invoking 'wait': Invalid duration: use a positive integer followed by s, m, h or d (for example 15m).
+wait ""                       -> [isError] An error occurred invoking 'wait': Invalid duration: use a positive integer followed by s, m, h or d (for example 15m).
+wait 15                       -> [isError] An error occurred invoking 'wait': Invalid duration: use a positive integer followed by s, m, h or d (for example 15m).
+wait "99999999999999999m"     -> [isError] An error occurred invoking 'wait': Invalid duration: use a positive integer followed by s, m, h or d (for example 15m).
+wait "00:15:00"               -> [isError] An error occurred invoking 'wait': Invalid duration: use a positive integer followed by s, m, h or d (for example 15m).
+wait without delay         -> [isError] An error occurred invoking 'wait': Missing argument 'delay'.
+wait_generic "15x"         -> [isError] An error occurred invoking 'wait_generic'.
+
+=== 5. Without the filter: does anyone call Dispose? ===
+3 calls + GC -> created=3 disposed=0
+
+=== 6. SDK path: WithTools<T> with an InputText parameter (no binder) ===
+send_sdk: {"type":"object","properties":{"text":{"description":"Text"}},"required":["text"]}
+send_sdk "abc" -> [isError] An error occurred invoking 'send_sdk'.

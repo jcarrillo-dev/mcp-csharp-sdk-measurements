@@ -1,0 +1,160 @@
+##### TRANSPORT=sdk WIPE_JSON=0 run=1
+Child environment: TRANSPORT=sdk WIPE_JSON=0
+as_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+send: {"result":{"content":[{"type":"text","text":"destination=h len=18 secret=True pinned=True capacity=20"}]},"id":11,"jsonrpc":"2.0"}
+status: {"result":{"content":[{"type":"text","text":"created=1 disposed=1"}]},"id":12,"jsonrpc":"2.0"}
+-- after the calls
+   as_string utf8 : 3
+   as_string utf16: 3
+   send utf8 : 3
+   send utf16: 2
+-- after a compacting GC in the child
+   as_string utf8 : 3
+   as_string utf16: 3
+   send utf8 : 3
+   send utf16: 2
+-- after 20 more calls without the secret
+   as_string utf8 : 1
+   as_string utf16: 1
+   send utf8 : 2
+   send utf16: 1
+##### TRANSPORT=sdk WIPE_JSON=0 run=2
+Child environment: TRANSPORT=sdk WIPE_JSON=0
+as_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+send: {"result":{"content":[{"type":"text","text":"destination=h len=18 secret=True pinned=True capacity=20"}]},"id":11,"jsonrpc":"2.0"}
+status: {"result":{"content":[{"type":"text","text":"created=1 disposed=1"}]},"id":12,"jsonrpc":"2.0"}
+-- after the calls
+   as_string utf8 : 2
+   as_string utf16: 2
+   send utf8 : 3
+   send utf16: 2
+-- after a compacting GC in the child
+   as_string utf8 : 2
+   as_string utf16: 2
+   send utf8 : 3
+   send utf16: 2
+-- after 20 more calls without the secret
+   as_string utf8 : 2
+   as_string utf16: 2
+   send utf8 : 2
+   send utf16: 1
+##### TRANSPORT=sdk WIPE_JSON=1 run=1
+Child environment: TRANSPORT=sdk WIPE_JSON=1
+as_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+send: {"result":{"content":[{"type":"text","text":"destination=h len=18 secret=True pinned=True capacity=20"}]},"id":11,"jsonrpc":"2.0"}
+status: {"result":{"content":[{"type":"text","text":"created=1 disposed=1"}]},"id":12,"jsonrpc":"2.0"}
+-- after the calls
+   as_string utf8 : 3
+   as_string utf16: 3
+   send utf8 : 1
+   send utf16: 2
+-- after a compacting GC in the child
+   as_string utf8 : 3
+   as_string utf16: 3
+   send utf8 : 1
+   send utf16: 2
+-- after 20 more calls without the secret
+   as_string utf8 : 1
+   as_string utf16: 1
+   send utf8 : 0
+   send utf16: 1
+##### TRANSPORT=sdk WIPE_JSON=1 run=2
+Child environment: TRANSPORT=sdk WIPE_JSON=1
+as_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+send: {"result":{"content":[{"type":"text","text":"destination=h len=18 secret=True pinned=True capacity=20"}]},"id":11,"jsonrpc":"2.0"}
+status: {"result":{"content":[{"type":"text","text":"created=1 disposed=1"}]},"id":12,"jsonrpc":"2.0"}
+-- after the calls
+   as_string utf8 : 3
+   as_string utf16: 3
+   send utf8 : 1
+   send utf16: 2
+-- after a compacting GC in the child
+   as_string utf8 : 3
+   as_string utf16: 3
+   send utf8 : 1
+   send utf16: 2
+-- after 20 more calls without the secret
+   as_string utf8 : 2
+   as_string utf16: 2
+   send utf8 : 0
+   send utf16: 1
+##### TRANSPORT=bytes WIPE_JSON=0 run=1
+Child environment: TRANSPORT=bytes WIPE_JSON=0
+as_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+send: {"result":{"content":[{"type":"text","text":"destination=h len=18 secret=True pinned=True capacity=20"}]},"id":11,"jsonrpc":"2.0"}
+status: {"result":{"content":[{"type":"text","text":"created=1 disposed=1"}]},"id":12,"jsonrpc":"2.0"}
+-- after the calls
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 2
+   send utf16: 0
+-- after a compacting GC in the child
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 2
+   send utf16: 0
+-- after 20 more calls without the secret
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 2
+   send utf16: 0
+##### TRANSPORT=bytes WIPE_JSON=0 run=2
+Child environment: TRANSPORT=bytes WIPE_JSON=0
+as_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+send: {"result":{"content":[{"type":"text","text":"destination=h len=18 secret=True pinned=True capacity=20"}]},"id":11,"jsonrpc":"2.0"}
+status: {"result":{"content":[{"type":"text","text":"created=1 disposed=1"}]},"id":12,"jsonrpc":"2.0"}
+-- after the calls
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 2
+   send utf16: 0
+-- after a compacting GC in the child
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 2
+   send utf16: 0
+-- after 20 more calls without the secret
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 2
+   send utf16: 0
+##### TRANSPORT=bytes WIPE_JSON=1 run=1
+Child environment: TRANSPORT=bytes WIPE_JSON=1
+as_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+send: {"result":{"content":[{"type":"text","text":"destination=h len=18 secret=True pinned=True capacity=20"}]},"id":11,"jsonrpc":"2.0"}
+status: {"result":{"content":[{"type":"text","text":"created=1 disposed=1"}]},"id":12,"jsonrpc":"2.0"}
+-- after the calls
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 0
+   send utf16: 0
+-- after a compacting GC in the child
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 0
+   send utf16: 0
+-- after 20 more calls without the secret
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 0
+   send utf16: 0
+##### TRANSPORT=bytes WIPE_JSON=1 run=2
+Child environment: TRANSPORT=bytes WIPE_JSON=1
+as_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
+send: {"result":{"content":[{"type":"text","text":"destination=h len=18 secret=True pinned=True capacity=20"}]},"id":11,"jsonrpc":"2.0"}
+status: {"result":{"content":[{"type":"text","text":"created=1 disposed=1"}]},"id":12,"jsonrpc":"2.0"}
+-- after the calls
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 0
+   send utf16: 0
+-- after a compacting GC in the child
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 0
+   send utf16: 0
+-- after 20 more calls without the secret
+   as_string utf8 : 2
+   as_string utf16: 1
+   send utf8 : 0
+   send utf16: 0
