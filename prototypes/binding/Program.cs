@@ -1,4 +1,5 @@
-// Measurement prototype for the MCP C# SDK 2.2.0, not production code. A single Native AOT binary:
+// Measurement prototype for the MCP C# SDK, not production code. A single Native AOT binary, built against
+// ModelContextProtocol 2.2.0 from NuGet or, with -p:McpSdkRoot=..., against the tool-parameter-binding branch (SDK_BRANCH):
 //   binding server   -> MCP server over stdio (variables: TRANSPORT=bytes, NO_FILTER=1, WITH_WITHTOOLS=1, ECHO=1, WIPE_JSON=1)
 //   binding tests    -> client: schemas, escapes, Dispose, TimeSpan errors (starts the server as a child process)
 //   binding compare  -> client: the same tool registered in different ways (CMP=withtools|create|aifunction|aifunction_opts)
@@ -29,8 +30,11 @@ if (mode == "server")
     builder.Logging.ClearProviders();
     IMcpServerBuilder mcp = builder.Services.AddMcpServer(o => o.ServerInfo = new() { Name = "binding", Version = "1" })
         .WithStdioServerTransport();
+#if !SDK_BRANCH
+    // Only needed with NuGet 2.2.0: on the branch the SDK disposes the bound values.
     if (Environment.GetEnvironmentVariable("NO_FILTER") != "1")
         mcp.WithRequestFilters(f => f.AddCallToolFilter(Binding.DisposeFilter));
+#endif
     if (Environment.GetEnvironmentVariable("WITH_WITHTOOLS") == "1")
         mcp.WithTools<SdkTools>(jsonOptions);
     builder.Services.AddSingleton<TestService>();
@@ -73,7 +77,11 @@ if (mode == "server")
         ("gc", nameof(Tools.Gc)),
     ];
     foreach ((string name, string method) in tools)
+#if SDK_BRANCH
+        builder.Services.AddSingleton(sp => Binding.CreateSdkTool(typeof(Tools).GetMethod(method)!, name, sp, jsonOptions));
+#else
         builder.Services.AddSingleton(sp => Binding.CreateTool(typeof(Tools).GetMethod(method)!, name, sp, jsonOptions));
+#endif
 
     if (Environment.GetEnvironmentVariable("TRANSPORT") == "bytes")
         builder.Services.Replace(ServiceDescriptor.Singleton<ITransport>(_ => new BytesTransport()));
@@ -203,8 +211,19 @@ public static class Tests
         return "[JSON-RPC error] " + n["error"]!.ToJsonString();
     }
 
+#if SDK_BRANCH
+    private const string Build = "tool-parameter-binding branch: tools created by the SDK, the SDK disposes the bound values, no filter";
+    private const string DisposeHeading = "3. Dispose by the SDK, when another argument fails after binding text";
+    private const string NoFilterHeading = "5. No filter (NO_FILTER=1 has no effect on this build): does anyone call Dispose?";
+#else
+    private const string Build = "NuGet 2.2.0: tools created with McpServerTool.Create(AIFunction), bound values disposed by a CallToolFilter";
+    private const string DisposeHeading = "3. Dispose with the filter, when another argument fails after binding text";
+    private const string NoFilterHeading = "5. Without the filter: does anyone call Dispose?";
+#endif
+
     public static void Run()
     {
+        Console.WriteLine("Build: " + Build + "\n");
         Console.WriteLine("=== 1. Schemas (tools/list) with the binder ===");
         using (Client c = new(("ECHO", "1")))
         {
@@ -220,7 +239,7 @@ public static class Tests
             Console.WriteLine("no secret:    " + Text(c.Tool("send", "{\"destination\":\"h\",\"text\":\"abc\"}")));
             Console.WriteLine("status:       " + Text(c.Tool("status", "{}")));
 
-            Console.WriteLine("\n=== 3. Dispose with the filter, when another argument fails after binding text ===");
+            Console.WriteLine("\n=== " + DisposeHeading + " ===");
             Console.WriteLine("secret=\"x\":   " + Text(c.Tool("send", "{\"destination\":\"h\",\"text\":\"abc\",\"secret\":\"x\"}")));
             Console.WriteLine("status:       " + Text(c.Tool("status", "{}")));
             Console.WriteLine("no text:      " + Text(c.Tool("send", "{\"destination\":\"h\"}")));
@@ -234,7 +253,7 @@ public static class Tests
             Console.WriteLine("wait_generic \"15x\"         -> " + Text(c.Tool("wait_generic", "{\"delay\":\"15x\"}")));
         }
 
-        Console.WriteLine("\n=== 5. Without the filter: does anyone call Dispose? ===");
+        Console.WriteLine("\n=== " + NoFilterHeading + " ===");
         using (Client c = new(("NO_FILTER", "1")))
         {
             for (int i = 0; i < 3; i++)

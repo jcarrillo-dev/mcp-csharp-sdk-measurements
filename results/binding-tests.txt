@@ -1,3 +1,5 @@
+Build: NuGet 2.2.0: tools created with McpServerTool.Create(AIFunction), bound values disposed by a CallToolFilter
+
 === 1. Schemas (tools/list) with the binder ===
 metadata: {"type":"object","properties":{}}
 send: {"type":"object","properties":{"destination":{"description":"Destination","type":"string"},"text":{"type":"string","description":"Text to send"},"secret":{"description":"Whether the text is secret","type":"boolean","default":false}},"required":["destination","text"]}

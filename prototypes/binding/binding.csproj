@@ -17,7 +17,15 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
   </PropertyGroup>
-  <ItemGroup>
+  <!-- By default the published 2.2.0 package is used. Pass -p:McpSdkRoot=/path/to/csharp-sdk (checked out at the
+       tool-parameter-binding branch) to build against it instead: SDK_BRANCH is defined and the SDK disposes the bound values. -->
+  <ItemGroup Condition="'$(McpSdkRoot)' == ''">
     <PackageReference Include="ModelContextProtocol" Version="2.2.0" />
   </ItemGroup>
+  <ItemGroup Condition="'$(McpSdkRoot)' != ''">
+    <ProjectReference Include="$(McpSdkRoot)/src/ModelContextProtocol/ModelContextProtocol.csproj" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(McpSdkRoot)' != ''">
+    <DefineConstants>$(DefineConstants);SDK_BRANCH</DefineConstants>
+  </PropertyGroup>
 </Project>

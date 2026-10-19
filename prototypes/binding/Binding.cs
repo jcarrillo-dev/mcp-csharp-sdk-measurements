@@ -1,8 +1,13 @@
-// Measurement prototype, not production code: binding MCP tool arguments without creating a string, using ONLY what
-// already exists: AIFunctionFactoryOptions.ConfigureParameterBinding (Microsoft.Extensions.AI.Abstractions 10.8.3) +
-// McpServerTool.Create(AIFunction, McpServerToolCreateOptions) (ModelContextProtocol 2.2.0).
-// The SDK does not let ConfigureParameterBinding through McpServerToolCreateOptions or WithTools<T>, so here the
-// AIFunction is built by hand and what the SDK would do is restored (MarshalResult and the RequestContext/McpServer injection).
+// Measurement prototype, not production code: binding MCP tool arguments without creating a string.
+// Two builds:
+// - Default (ModelContextProtocol 2.2.0 from NuGet), using ONLY what already exists:
+//   AIFunctionFactoryOptions.ConfigureParameterBinding (Microsoft.Extensions.AI.Abstractions 10.8.3) +
+//   McpServerTool.Create(AIFunction, McpServerToolCreateOptions). The SDK does not let ConfigureParameterBinding through
+//   McpServerToolCreateOptions or WithTools<T>, so here the AIFunction is built by hand and what the SDK would do is
+//   restored (MarshalResult and the RequestContext/McpServer injection). Nothing disposes the bound values, so a
+//   CallToolFilter with try/finally does it (DisposeFilter).
+// - SDK_BRANCH (built with -p:McpSdkRoot=<clone at the tool-parameter-binding branch>): the same binders go through
+//   McpServerToolCreateOptions.ConfigureParameterBinding and the SDK disposes the bound values, so no filter is needed.
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -84,6 +89,70 @@ public static class Binding
         return null;
     }
 
+    // Schema of an own bindable TYPE (shared by both builds).
+    public static AIJsonSchemaCreateOptions SchemaCreateOptions { get; } = new()
+    {
+                // Schema of an own bindable TYPE. TransformSchemaNode only knows the node's type: for the function's
+                // parameters it does not give the ParameterInfo (ParameterAttributeProvider is the one of the constructor
+                // associated with a property, AIJsonSchemaCreateContext.cs:66 at ccb356f3; measured: null). Per parameter: SchemaOverridingFunction.
+        TransformSchemaNode = static (ctx, node) =>
+        {
+            if (Environment.GetEnvironmentVariable("DEBUG_SCHEMA") == "1") Console.Error.WriteLine($"TransformSchemaNode path=[{string.Join(",", ctx.Path.ToArray())}] type={ctx.TypeInfo.Type.Name} prov={ctx.ParameterAttributeProvider?.GetType().Name ?? "null"} propprov={ctx.PropertyAttributeProvider?.GetType().Name ?? "null"} attr={ctx.GetCustomAttribute<BindWithAttribute>()?.GetType().Name ?? "null"} node={node.ToJsonString()}");
+            if (ctx.Path.Length != 0 || !s_types.TryGetValue(ctx.TypeInfo.Type, out var e))
+                return node;
+            JsonObject replacement = JsonNode.Parse(e.Schema)!.AsObject();
+            if (node is JsonObject old && old["description"] is JsonNode d)
+                replacement["description"] = d.DeepClone();
+            return replacement;
+        },
+    };
+
+    // Binding of an own bindable type or of a parameter with [BindWith]; default for anything else.
+    // trackForDispose: record the IDisposable results in RequestContext.Items for DisposeFilter (NuGet build only).
+    public static AIFunctionFactoryOptions.ParameterBindingOptions CreateBinding(ParameterInfo pi, bool trackForDispose)
+    {
+        if (Find(pi, pi.ParameterType) is not { } e)
+            return default;
+
+        BindFunction bind = e.Bind;
+        string argName = pi.Name!;
+        bool hasDefault = pi.HasDefaultValue;
+        object? defaultValue = pi.DefaultValue;
+        return new()
+        {
+            BindParameter = (p, args) =>
+            {
+                var request = (RequestContext<CallToolRequestParams>)args.Services!.GetService(typeof(RequestContext<CallToolRequestParams>))!;
+                if (!args.TryGetValue(argName, out object? o) || o is null)
+                    return hasDefault ? defaultValue : throw new McpException($"Missing argument '{argName}'.");
+                if (o is not JsonElement value)
+                    throw new McpException($"Argument '{argName}' did not arrive as JsonElement but as {o.GetType().FullName}.");
+                object? r = bind(value, new BindingContext(args, request));
+                if (trackForDispose && r is IDisposable d)
+                {
+                    if (!request.Items.TryGetValue(DisposeKey, out object? l) || l is not List<IDisposable> list)
+                        request.Items[DisposeKey] = list = [];
+                    list.Add(d);
+                }
+                return r;
+            },
+        };
+    }
+
+#if SDK_BRANCH
+    // tool-parameter-binding branch: the SDK keeps its own binding (RequestContext, McpServer, DI, attributes, metadata)
+    // and disposes the values the binder returns, so no filter and no Items list.
+    public static McpServerTool CreateSdkTool(MethodInfo method, string name, IServiceProvider services, JsonSerializerOptions jsonOptions) =>
+        McpServerTool.Create(method, target: null, new McpServerToolCreateOptions
+        {
+            Name = name,
+            Services = services,
+            SerializerOptions = jsonOptions,
+            SchemaCreateOptions = SchemaCreateOptions,
+            ConfigureParameterBinding = static pi => CreateBinding(pi, trackForDispose: false),
+        });
+#endif
+
     public static McpServerTool CreateTool(MethodInfo method, string name, IServiceProvider services, JsonSerializerOptions jsonOptions, McpServerToolCreateOptions? toolOptions = null)
     {
         AIFunctionFactoryOptions options = new()
@@ -92,22 +161,7 @@ public static class Binding
             SerializerOptions = jsonOptions,
             // Same as the SDK (AIFunctionMcpServerTool.cs:77): without this MEAI serializes the result to JsonElement.
             MarshalResult = static (result, _, _) => new ValueTask<object?>(result),
-            JsonSchemaCreateOptions = new AIJsonSchemaCreateOptions
-            {
-                // Schema of an own bindable TYPE. TransformSchemaNode only knows the node's type: for the function's
-                // parameters it does not give the ParameterInfo (ParameterAttributeProvider is the one of the constructor
-                // associated with a property, AIJsonSchemaCreateContext.cs:66 at ccb356f3; measured: null). Per parameter: SchemaOverridingFunction.
-                TransformSchemaNode = static (ctx, node) =>
-                {
-                    if (Environment.GetEnvironmentVariable("DEBUG_SCHEMA") == "1") Console.Error.WriteLine($"TransformSchemaNode path=[{string.Join(",", ctx.Path.ToArray())}] type={ctx.TypeInfo.Type.Name} prov={ctx.ParameterAttributeProvider?.GetType().Name ?? "null"} propprov={ctx.PropertyAttributeProvider?.GetType().Name ?? "null"} attr={ctx.GetCustomAttribute<BindWithAttribute>()?.GetType().Name ?? "null"} node={node.ToJsonString()}");
-                    if (ctx.Path.Length != 0 || !s_types.TryGetValue(ctx.TypeInfo.Type, out var e))
-                        return node;
-                    JsonObject replacement = JsonNode.Parse(e.Schema)!.AsObject();
-                    if (node is JsonObject old && old["description"] is JsonNode d)
-                        replacement["description"] = d.DeepClone();
-                    return replacement;
-                },
-            },
+            JsonSchemaCreateOptions = SchemaCreateOptions,
             ConfigureParameterBinding = pi =>
             {
                 // What the SDK injects and is lost when its ConfigureParameterBinding is replaced (only two types here).
@@ -119,32 +173,7 @@ public static class Binding
                     ispis.IsService(pi.ParameterType))
                     return new() { ExcludeFromSchema = true, BindParameter = static (p, a) => a.Services?.GetService(p.ParameterType) ?? throw new ArgumentException("No service of the requested type was found.") };
 
-                if (Find(pi, pi.ParameterType) is not { } e)
-                    return default;
-
-                BindFunction bind = e.Bind;
-                string argName = pi.Name!;
-                bool hasDefault = pi.HasDefaultValue;
-                object? defaultValue = pi.DefaultValue;
-                return new()
-                {
-                    BindParameter = (p, args) =>
-                    {
-                        var request = (RequestContext<CallToolRequestParams>)args.Services!.GetService(typeof(RequestContext<CallToolRequestParams>))!;
-                        if (!args.TryGetValue(argName, out object? o) || o is null)
-                            return hasDefault ? defaultValue : throw new McpException($"Missing argument '{argName}'.");
-                        if (o is not JsonElement value)
-                            throw new McpException($"Argument '{argName}' did not arrive as JsonElement but as {o.GetType().FullName}.");
-                        object? r = bind(value, new BindingContext(args, request));
-                        if (r is IDisposable d)
-                        {
-                            if (!request.Items.TryGetValue(DisposeKey, out object? l) || l is not List<IDisposable> list)
-                                request.Items[DisposeKey] = list = [];
-                            list.Add(d);
-                        }
-                        return r;
-                    },
-                };
+                return CreateBinding(pi, trackForDispose: true);
             },
         };
         AIFunction function = new SchemaOverridingFunction(AIFunctionFactory.Create(method, target: null, options), method);

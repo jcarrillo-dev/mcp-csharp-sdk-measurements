@@ -21,7 +21,7 @@ gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
    c_filter utf8 : 0
    c_filter utf16: 1
    d_message utf8 : 1
-   d_message utf16: 2
+   d_message utf16: 4
 -- after 20 more calls without the secret
    a_string utf8 : 2
    a_string utf16: 2
@@ -30,7 +30,7 @@ gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
    c_filter utf8 : 0
    c_filter utf16: 1
    d_message utf8 : 0
-   d_message utf16: 1
+   d_message utf16: 3
 ##### main (af0fda30) SDK transport, all variants, run=2
 a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
 b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":11,"jsonrpc":"2.0"}
@@ -70,7 +70,7 @@ b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":11,"json
 c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":12,"jsonrpc":"2.0"}
 d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":13,"jsonrpc":"2.0"}
 -- after the calls
-   a_string utf8 : 3
+   a_string utf8 : 2
    a_string utf16: 1
    b_element utf8 : 0
    b_element utf16: 0
@@ -80,7 +80,7 @@ d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id
    d_message utf16: 0
 gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
 -- after a compacting GC in the child
-   a_string utf8 : 3
+   a_string utf8 : 2
    a_string utf16: 1
    b_element utf8 : 0
    b_element utf16: 0
@@ -122,7 +122,7 @@ gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
    d_message utf8 : 1
    d_message utf16: 0
 -- after 20 more calls without the secret
-   a_string utf8 : 1
+   a_string utf8 : 2
    a_string utf16: 1
    b_element utf8 : 0
    b_element utf16: 0
@@ -130,14 +130,14 @@ gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
    c_filter utf16: 0
    d_message utf8 : 0
    d_message utf16: 0
-##### toolcall-from-jsonelement (c027c8e3) SDK transport, all variants, run=1
+##### toolcall-from-jsonelement (9e9d32be) SDK transport, all variants, run=1
 a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
 b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":11,"jsonrpc":"2.0"}
 c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":12,"jsonrpc":"2.0"}
 d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":13,"jsonrpc":"2.0"}
 -- after the calls
-   a_string utf8 : 2
-   a_string utf16: 2
+   a_string utf8 : 3
+   a_string utf16: 3
    b_element utf8 : 0
    b_element utf16: 1
    c_filter utf8 : 0
@@ -146,8 +146,8 @@ d_message: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id
    d_message utf16: 2
 gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
 -- after a compacting GC in the child
-   a_string utf8 : 2
-   a_string utf16: 2
+   a_string utf8 : 3
+   a_string utf16: 3
    b_element utf8 : 0
    b_element utf16: 1
    c_filter utf8 : 0
@@ -155,15 +155,15 @@ gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
    d_message utf8 : 1
    d_message utf16: 2
 -- after 20 more calls without the secret
-   a_string utf8 : 1
-   a_string utf16: 1
+   a_string utf8 : 3
+   a_string utf16: 3
    b_element utf8 : 0
    b_element utf16: 1
    c_filter utf8 : 0
    c_filter utf16: 1
    d_message utf8 : 0
    d_message utf16: 1
-##### toolcall-from-jsonelement (c027c8e3) SDK transport, all variants, run=2
+##### toolcall-from-jsonelement (9e9d32be) SDK transport, all variants, run=2
 a_string: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":10,"jsonrpc":"2.0"}
 b_element: {"result":{"content":[{"type":"text","text":"len=18"}]},"id":11,"jsonrpc":"2.0"}
 c_filter: {"result":{"content":[{"type":"text","text":"len=18 string=[]"}]},"id":12,"jsonrpc":"2.0"}
@@ -186,7 +186,7 @@ gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
    c_filter utf8 : 0
    c_filter utf16: 1
    d_message utf8 : 1
-   d_message utf16: 4
+   d_message utf16: 2
 -- after 20 more calls without the secret
    a_string utf8 : 2
    a_string utf16: 2
@@ -195,4 +195,4 @@ gc: {"result":{"content":[{"type":"text","text":"ok"}]},"id":99,"jsonrpc":"2.0"}
    c_filter utf8 : 0
    c_filter utf16: 1
    d_message utf8 : 0
-   d_message utf16: 2
+   d_message utf16: 1
