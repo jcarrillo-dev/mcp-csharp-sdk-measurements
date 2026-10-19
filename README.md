@@ -72,10 +72,10 @@ scripts/binding-scan.sh > results/binding-scan.txt
 scripts/memory-scan.sh > results/memory-scan.txt
 ```
 
-The two measurements of the SDK branches need a clone of the fork that holds the branches (`<FORK_URL>`). The scripts check each ref out in a temporary `git worktree`, so the clone isn't modified:
+The two measurements of the SDK branches need a clone of the fork that holds the branches (https://github.com/jcarrillo-dev/csharp-sdk). The scripts check each ref out in a temporary `git worktree`, so the clone isn't modified:
 
 ```bash
-git clone <FORK_URL> ../csharp-sdk
+git clone https://github.com/jcarrillo-dev/csharp-sdk.git ../csharp-sdk
 git -C ../csharp-sdk fetch origin stdio-pipereader:stdio-pipereader toolcall-from-jsonelement:toolcall-from-jsonelement
 scripts/sdk-allocations.sh ../csharp-sdk > results/sdk-allocations.txt
 scripts/memory-scan-sdk.sh ../csharp-sdk > results/memory-scan-sdk-branches.txt
